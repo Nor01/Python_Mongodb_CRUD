@@ -60,10 +60,35 @@ def find_tim():
     printer.pprint(tim)
 
 def count_all_people():
-    counter = person_collection.find().count_documents({})
+    counter = person_collection.count_documents({})
     print("Number of people", counter)
 
-count_all_people()
+def get_person_by_id(person_id):
 
+    from bson.objectid import ObjectId
 
+    _id = ObjectId(person_id)
 
+    person = person_collection.find_one({"_id":_id})
+    printer.pprint(person)
+
+def get_age_range(min_age, max_age):
+
+    query = {"$and":[
+                {"age":{"$gte":min_age}},
+                {"age":{"$lte":max_age}}
+            ]}
+
+    people = person_collection.find(query).sort("age")
+
+    for person in people:
+        printer.pprint(person)
+
+def project_columns():
+    columns = {"_id":0, "first_name":1, "last_name":1}
+    people = person_collection.find({}, columns)
+
+    for person in people:
+        printer.pprint(person)
+
+project_columns()
